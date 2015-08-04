@@ -21,6 +21,8 @@ yum install -q -y $GANGLIA_PACKAGES & sleep 1
 wait
 
 for node in $SLAVES $OTHER_MASTERS; do
+  #block till other yum process finishes its job
+  ssh -t -t $SSH_OPTS root@$node "while [ -f /var/run/yum.pid ]; do sleep 1; done"
   #Uninstalls older version of ganglia from other masters if it was reinstalled in AMI
   ssh -t -t $SSH_OPTS root@$node "yum remove -q -y $OLD_GANGLIA_PACKAGES  2>&1 | grep -v 'No Match for argument:'"
   ssh -t -t $SSH_OPTS root@$node "yum install -q -y $GANGLIA_PACKAGES" & sleep 0.3
