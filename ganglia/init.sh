@@ -12,7 +12,7 @@ OLD_GANGLIA_PACKAGES="httpd* php* ganglia* ganglia* ganglia-gmond* ganglia-gmeta
 GANGLIA_PACKAGES="httpd24-2.4* php56-5.6* ganglia-3.6* ganglia-web-3.5* ganglia-gmond-3.6* ganglia-gmetad-3.6*"
 
 #Uninstalls older version of ganglia from master if it was reinstalled in AMI
-yum remove -q -y $OLD_GANGLIA_PACKAGES
+yum remove -q -y $OLD_GANGLIA_PACKAGES 2>&1 | grep -v "No Match for argument:"
 yum install -q -y $GANGLIA_PACKAGES & sleep 1
 wait
 
