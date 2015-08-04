@@ -14,24 +14,15 @@ OLD_GANGLIA_PACKAGES="httpd* php* ganglia* ganglia* ganglia-gmond* ganglia-gmeta
 GANGLIA_PACKAGES="httpd24-2.4* php56-5.6* ganglia-3.6* ganglia-web-3.5* ganglia-gmond-3.6* ganglia-gmetad-3.6*"
 
 
-#block till other yum process finishes its job
-while [ -f /var/run/yum.pid ]; do sleep 1; done
-
 #Uninstalls older version of ganglia from master if it was reinstalled in AMI
 yum remove -q -y $OLD_GANGLIA_PACKAGES 2>&1 | grep -v "No Match for argument:"
-yum install -q -y $GANGLIA_PACKAGES & sleep 1
-wait
-
+yum install -q -y $GANGLIA_PACKAGES
 
 
 for node in $SLAVES $OTHER_MASTERS; do
-  #block till other yum process finishes its job
-  ssh -t -t $SSH_OPTS root@$node "while [ -f /var/run/yum.pid ]; do sleep 1; done"
   #Uninstalls older version of ganglia from other masters if it was reinstalled in AMI
-  ssh -t -t $SSH_OPTS root@$node "yum remove -q -y $OLD_GANGLIA_PACKAGES  2>&1 | grep -v 'No Match for argument:'"
-  ssh -t -t $SSH_OPTS root@$node "yum install -q -y $GANGLIA_PACKAGES"
+  ssh -t -t $SSH_OPTS root@$node "yum remove -q -y $OLD_GANGLIA_PACKAGES  2>&1 | grep -v 'No Match for argument:'; yum install -q -y $GANGLIA_PACKAGES"
 done
-wait
 
 # Post-package installation : Symlink /var/lib/ganglia/rrds to /mnt/ganglia/rrds
 rmdir /var/lib/ganglia/rrds
