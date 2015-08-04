@@ -18,7 +18,7 @@ wait
 
 for node in $SLAVES $OTHER_MASTERS; do
   #Uninstalls older version of ganglia from other masters if it was reinstalled in AMI
-  ssh -t -t $SSH_OPTS root@$node "yum remove -q -y $OLD_GANGLIA_PACKAGES" & sleep 0.3
+  ssh -t -t $SSH_OPTS root@$node "yum remove -q -y $OLD_GANGLIA_PACKAGES  2>&1 | grep -v 'No Match for argument:'"
   ssh -t -t $SSH_OPTS root@$node "yum install -q -y $GANGLIA_PACKAGES" & sleep 0.3
 done
 wait
