@@ -21,7 +21,7 @@ yum install -q -y $GANGLIA_PACKAGES
 
 for node in $SLAVES $OTHER_MASTERS; do
   #Uninstalls older version of ganglia from other masters if it was reinstalled in AMI
-  ssh -t -t $SSH_OPTS root@$node "yum remove -q -y $OLD_GANGLIA_PACKAGES  2>&1 | grep -v 'No Match for argument:'; yum install -q -y $GANGLIA_PACKAGES"
+  ssh -t -t $SSH_OPTS root@$node "yum remove -q -y $OLD_GANGLIA_PACKAGES  2>&1 | grep -v 'No Match for argument:'; ps -aef | grep yum; sleep 1 ; yum install -q -y $GANGLIA_PACKAGES"
 done
 
 # Post-package installation : Symlink /var/lib/ganglia/rrds to /mnt/ganglia/rrds
